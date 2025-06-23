@@ -30,7 +30,7 @@ export default function RegisterPage() {
       {error && <p className="text-red-500 mb-2">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-3">
         {[
-          ["username", "Όνομα Χρήστη"],
+          ["username", "Username"],
           ["password", "Κωδικός", "password"],
           ["confirm", "Επιβεβαίωση Κωδικού", "password"],
           ["firstName", "Όνομα"],
