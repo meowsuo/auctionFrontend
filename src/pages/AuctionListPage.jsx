@@ -4,13 +4,13 @@ import axios from 'axios';
 function AuctionListPage() {
     const [auctions, setAuctions] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null); // 👈 error state
+    const [error, setError] = useState(null); //
 
     useEffect(() => {
         axios.get('https://auctionbackend-4sb2.onrender.com/api/auctions', {
             auth: {
-                username: 'user',
-                password: '99315e11-db79-4923-939b-a360156b086c'
+                username: 'admin',
+                password: 'adminpass'
             }
         })
             .then(res => {
