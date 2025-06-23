@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, HashRouter as Router } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import AuctionListPage from './pages/AuctionListPage';
@@ -8,19 +8,21 @@ import GuestRoute from './components/GuestRoute';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
-  return (
-    <div className="min-h-screen bg-gray-100">
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Navigate to="/auctions" />} />
-        <Route path="/login" element={<GuestRoute> <LoginPage /> </GuestRoute>} />
-        <Route path="/register" element={<GuestRoute> <RegisterPage /> </GuestRoute>} />
-        <Route path="/auctions" element={<AuctionListPage />} />
-        <Route path="/dashboard" element={<ProtectedRoute> <Dashboard /> </ProtectedRoute>} />
-        <Route path="*" element={<Navigate to="/auctions" />} />
-      </Routes>
-    </div>
-  );
+    return (
+        <Router>
+            <div className="min-h-screen bg-gray-100">
+                <Navbar />
+                <Routes>
+                    <Route path="/" element={<Navigate to="/auctions" />} />
+                    <Route path="/login" element={<GuestRoute> <LoginPage /> </GuestRoute>} />
+                    <Route path="/register" element={<GuestRoute> <RegisterPage /> </GuestRoute>} />
+                    <Route path="/auctions" element={<AuctionListPage />} />
+                    <Route path="/dashboard" element={<ProtectedRoute> <Dashboard /> </ProtectedRoute>} />
+                    <Route path="*" element={<Navigate to="/auctions" />} />
+                </Routes>
+            </div>
+        </Router>
+    );
 }
 
 export default App;
