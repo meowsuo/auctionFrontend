@@ -10,7 +10,7 @@ function AuctionListPage() {
         axios.get('https://auctionbackend-4sb2.onrender.com/api/auctions', {
             auth: {
                 username: 'user',
-                password: 'c6c3131e-06f2-4efe-b1d5-30b065e8f7ff'
+                password: '99315e11-db79-4923-939b-a360156b086c'
             }
         })
             .then(res => {
