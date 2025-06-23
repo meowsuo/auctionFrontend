@@ -30,7 +30,8 @@
     "globals": "^16.0.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.3.5",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vite-plugin-pwa": "^1.0.0"
   },
   "homepage": "https://meowsuo.github.io/auctionFrontend"
 }
