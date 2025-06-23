@@ -28,7 +28,7 @@ function LoginPage() {
 
   return (
     <div className="max-w-sm mx-auto mt-8 bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold mb-4">Είσοδος</h2>
+      <h2 className="text-xl font-bold mb-4">Sign In</h2>
       {error && <p className="text-red-500">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-3">
         <div>
@@ -54,7 +54,7 @@ function LoginPage() {
           />
         </div>
         <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-          Είσοδος
+          Sign In
         </button>
       </form>
     </div>

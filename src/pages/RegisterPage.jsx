@@ -26,7 +26,7 @@ export default function RegisterPage() {
 
   return (
     <div className="max-w-md mx-auto mt-8 bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold mb-4">Εγγραφή</h2>
+      <h2 className="text-xl font-bold mb-4">Register</h2>
       {error && <p className="text-red-500 mb-2">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-3">
         {[
@@ -51,7 +51,7 @@ export default function RegisterPage() {
           </div>
         ))}
         <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-          Εγγραφή
+          Register
         </button>
       </form>
     </div>
