@@ -8,8 +8,8 @@ function AuctionListPage() {
   useEffect(() => {
       axios.get('https://auctionbackend-4sb2.onrender.com/api/auctions', {
           auth: {
-              username: 'yourUsername',
-              password: 'yourPassword'
+              username: 'user',
+              password: '6f1f4873-e540-4d75-a700-209949582974'
           }
       })
         .then(res => {
