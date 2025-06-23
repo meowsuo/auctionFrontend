@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
-  base: '/auctionFrontend/', // important for GitHub Pages (match repo name)
+  base: '/auctionFrontend/',
   plugins: [
     react(),
     VitePWA({

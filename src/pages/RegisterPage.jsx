@@ -12,7 +12,7 @@ export default function RegisterPage() {
 
   const handleSubmit = e => {
     e.preventDefault();
-    if (data.password !== data.confirm) return setError("Οι κωδικοί δεν ταιριάζουν.");
+    if (data.password !== data.confirm) return setError("Codes don't match");
 
     const users = JSON.parse(localStorage.getItem("users") || "[]");
     if (users.find(u => u.username === data.username))
