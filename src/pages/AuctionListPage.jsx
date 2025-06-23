@@ -6,7 +6,12 @@ function AuctionListPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('https://auctionbackend-4sb2.onrender.com/api/auctions')
+      axios.get('https://auctionbackend-4sb2.onrender.com/api/auctions', {
+          auth: {
+              username: 'yourUsername',
+              password: 'yourPassword'
+          }
+      })
         .then(res => {
           setAuctions(res.data);
           setLoading(false);
