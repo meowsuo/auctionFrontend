@@ -16,7 +16,7 @@ export default function RegisterPage() {
 
     const users = JSON.parse(localStorage.getItem("users") || "[]");
     if (users.find(u => u.username === data.username))
-      return setError("Το όνομα χρήστη υπάρχει ήδη.");
+      return setError("Username already exists");
 
     const newUsers = [...users, data];
     localStorage.setItem("users", JSON.stringify(newUsers));
@@ -31,15 +31,15 @@ export default function RegisterPage() {
       <form onSubmit={handleSubmit} className="space-y-3">
         {[
           ["username", "Username"],
-          ["password", "Κωδικός", "password"],
-          ["confirm", "Επιβεβαίωση Κωδικού", "password"],
-          ["firstName", "Όνομα"],
-          ["lastName", "Επώνυμο"],
+          ["password", "Password", "password"],
+          ["confirm", "Confirm Password", "password"],
+          ["firstName", "First Name"],
+          ["lastName", "Last Name"],
           ["email", "Email", "email"],
-          ["phone", "Τηλέφωνο"],
-          ["address", "Διεύθυνση"],
-          ["location", "Τοποθεσία"],
-          ["afm", "ΑΦΜ"]
+          ["phone", "Phone"],
+          ["address", "Address"],
+          ["location", "Location"],
+          ["afm", "AFM"]
         ].map(([name, label, type = "text"]) => (
           <div key={name}>
             <label className="block text-sm">{label}</label>

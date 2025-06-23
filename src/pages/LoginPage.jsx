@@ -22,7 +22,7 @@ function LoginPage() {
       
       navigate("/auctions");
     } catch (err) {
-      setError("Λάθος όνομα χρήστη ή κωδικός.");
+      setError("Wrong username or password");
     }
   };
 
