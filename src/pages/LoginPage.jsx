@@ -32,7 +32,7 @@ function LoginPage() {
       {error && <p className="text-red-500">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-3">
         <div>
-          <label className="block mb-1">Όνομα Χρήστη</label>
+          <label className="block mb-1">Username</label>
           <input
             type="text"
             name="username"
@@ -43,7 +43,7 @@ function LoginPage() {
           />
         </div>
         <div>
-          <label className="block mb-1">Κωδικός</label>
+          <label className="block mb-1">Password</label>
           <input
             type="password"
             name="password"
