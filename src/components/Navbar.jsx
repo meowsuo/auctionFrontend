@@ -6,12 +6,16 @@ function Navbar() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        const savedUsername = localStorage.getItem("username");
+        const updateFromStorage = () => {
+            const token = localStorage.getItem("token");
+            const savedUsername = localStorage.getItem("username");
+            setUsername(token && savedUsername ? savedUsername : null);
+        };
 
-        if (token && savedUsername) {
-            setUsername(savedUsername);
-        }
+        updateFromStorage(); // Run immediately on first load
+        window.addEventListener("storage", updateFromStorage);
+
+        return () => window.removeEventListener("storage", updateFromStorage);
     }, []);
 
     const handleLogout = () => {
