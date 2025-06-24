@@ -1,26 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 function Navbar() {
-    const [username, setUsername] = useState(null);
+    const { isLoggedIn, username, logout } = useAuth();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const updateFromStorage = () => {
-            const token = localStorage.getItem("token");
-            const savedUsername = localStorage.getItem("username");
-            setUsername(token && savedUsername ? savedUsername : null);
-        };
-
-        updateFromStorage(); // Run immediately on first load
-        window.addEventListener("storage", updateFromStorage);
-
-        return () => window.removeEventListener("storage", updateFromStorage);
-    }, []);
-
     const handleLogout = () => {
-        localStorage.clear();
-        setUsername(null);
+        logout();
         navigate("/");
     };
 
@@ -29,12 +15,12 @@ function Navbar() {
             <div className="container mx-auto flex items-center space-x-4">
                 <Link to="/auctions" className="text-blue-600 hover:underline">Auctions</Link>
 
-                {username && (
+                {isLoggedIn && (
                     <Link to="/create" className="text-blue-600 hover:underline">Create Auction</Link>
                 )}
 
                 <div className="ml-auto flex items-center space-x-4">
-                    {username ? (
+                    {isLoggedIn ? (
                         <>
                             <span className="text-gray-700">Hello, {username}</span>
                             <button onClick={handleLogout} className="text-red-600 hover:underline">Logout</button>

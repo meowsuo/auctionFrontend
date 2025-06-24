@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from '../context/AuthContext';
 
 function LoginPage() {
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [credentials, setCredentials] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
@@ -16,15 +18,10 @@ function LoginPage() {
     setError("");
 
     try {
-      // 1. Send credentials to backend
       const response = await axios.post("https://auctionbackend-4sb2.onrender.com/api/auth/login", credentials);
 
-      // 2. Extract and store the JWT token
-      const token = response.data.token; // ← backend must return { token: "..." }
-      localStorage.setItem("token", token); // used by ProtectedRoute and API calls
-      localStorage.setItem("username", credentials.username); // optional use
-
-      // 3. Redirect to the auctions page
+      const token = response.data.token;
+      login(token, credentials.username);
       navigate("/auctions");
     } catch (err) {
       console.error(err);
