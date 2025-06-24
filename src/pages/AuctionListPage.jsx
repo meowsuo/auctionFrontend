@@ -8,10 +8,11 @@ function AuctionListPage() {
 
     useEffect(() => {
         const token = localStorage.getItem("token");
+        console.log("Using token:", token); // ✅ Debug
 
         axios.get('https://auctionbackend-4sb2.onrender.com/api/auctions', {
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${token}` // ✅ Set JWT here
             }
         })
             .then(res => {
@@ -24,6 +25,7 @@ function AuctionListPage() {
                 setLoading(false);
             });
     }, []);
+
 
     // NEW: Function to delete auction
     const handleDelete = async (id) => {
