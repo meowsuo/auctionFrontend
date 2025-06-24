@@ -5,7 +5,7 @@ import App from './App.jsx'
 import { HashRouter } from 'react-router-dom';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider } from './context/AuthProvider';
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
