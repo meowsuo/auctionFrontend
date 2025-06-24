@@ -16,10 +16,13 @@ function LoginPage() {
     setError("");
 
     try {
-      const response = await axios.post("https://localhost:8080/api/login", credentials);
-      
-      localStorage.setItem("user", JSON.stringify(response.data));
-      
+      const response = await axios.post("https://auctionbackend-4sb2.onrender.com/api/login", credentials);
+
+      // Save token to localStorage
+      const token = response.data.token; // Make sure backend returns `{ token: "..." }`
+      localStorage.setItem("token", token);
+      localStorage.setItem("username", credentials.username); // Optional
+
       navigate("/auctions");
     } catch (err) {
       setError("Wrong username or password");
