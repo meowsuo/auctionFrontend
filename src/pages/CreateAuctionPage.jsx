@@ -22,9 +22,12 @@ export default function CreateAuctionPage() {
         }
 
         try {
-            await axios.post("https://auctionbackend-4sb2.onrender.com/api/auctions", formData, {
+            const token = localStorage.getItem("token");
+
+            await axios.post("https://.../api/auctions", formData, {
                 headers: {
-                    "Content-Type": "multipart/form-data"
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${token}`
                 }
             });
             navigate('/auctions');
