@@ -17,6 +17,7 @@ function App() {
                 <Route path="/register" element={<GuestRoute><RegisterPage /></GuestRoute>} />
                 <Route path="/auctions" element={<AuctionListPage />} />
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/create" element={<ProtectedRoute><CreateAuctionPage /></ProtectedRoute>} />
                 <Route path="*" element={<Navigate to="/auctions" />} />
             </Routes>
         </div>
