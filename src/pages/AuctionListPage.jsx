@@ -7,10 +7,11 @@ function AuctionListPage() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        const token = localStorage.getItem("token");
+
         axios.get('https://auctionbackend-4sb2.onrender.com/api/auctions', {
-            auth: {
-                username: 'admin',
-                password: 'adminpass'
+            headers: {
+                Authorization: `Bearer ${token}`
             }
         })
             .then(res => {
@@ -19,7 +20,7 @@ function AuctionListPage() {
             })
             .catch(err => {
                 console.error("Error fetching auctions:", err);
-                setError('Failed to load auctions. Please try again later.');
+                setError('Failed to load auctions. Please log in again or try later.');
                 setLoading(false);
             });
     }, []);
