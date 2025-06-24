@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Navbar from './components/Navbar';
 import GuestRoute from './components/GuestRoute';
 import ProtectedRoute from './components/ProtectedRoute';
+import CreateAuctionPage from './pages/CreateAuctionPage';
 
 function App() {
     return (
