@@ -25,19 +25,19 @@ export default function AuctionDetailPage() {
     return (
         <div className="max-w-2xl mx-auto p-4 bg-white rounded shadow mt-4">
             <h1 className="text-2xl font-bold mb-2">{auction.name}</h1>
-            <p className="text-gray-600">{auction.description}</p>
+            <p className="text-gray-600 mb-4">{auction.description}</p>
 
-            <div className="mt-4 space-y-1">
-                <p><strong>Κατηγορία:</strong> {auction.categories.join(", ")}</p>
-                <p><strong>Τιμή Εκκίνησης:</strong> ${auction.firstBid}</p>
-                <p><strong>Τρέχουσα Τιμή:</strong> ${auction.currently}</p>
-                <p><strong>Τοποθεσία:</strong> {auction.location}, {auction.country}</p>
-                <p><strong>Έναρξη:</strong> {new Date(auction.started).toLocaleString()}</p>
-                <p><strong>Λήξη:</strong> {new Date(auction.ends).toLocaleString()}</p>
-                <p><strong>Πωλητής:</strong> {auction.seller.userID} (Rating: {auction.seller.rating})</p>
+            <div className="space-y-2 text-sm text-gray-700">
+                <p><strong>Category:</strong> {auction.categories.map(c => c.name).join(", ")}</p>
+                <p><strong>Starting Price:</strong> €{auction.startingPrice}</p>
+                <p><strong>Buyout Price:</strong> €{auction.buyoutPrice}</p>
+                <p><strong>Current Price:</strong> €{auction.currentPrice}</p>
+                <p><strong>Location:</strong> {auction.location}, {auction.country}</p>
+                <p><strong>Start Time:</strong> {new Date(auction.startTime).toLocaleString()}</p>
+                <p><strong>End Time:</strong> {new Date(auction.endTime).toLocaleString()}</p>
+                <p><strong>Seller:</strong> {auction.seller.username} ({auction.seller.firstName} {auction.seller.lastName})</p>
+                <p><strong>Seller Rating:</strong> {auction.seller.ratingAsSeller ?? "N/A"}</p>
             </div>
-
-            {/* You can later add a BidForm component here */}
         </div>
     );
 }
