@@ -8,7 +8,13 @@ export default function AuctionDetailPage() {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        axios.get(`https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`)
+        const token = localStorage.getItem("token");
+
+        axios.get(`https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
             .then(res => setAuction(res.data))
             .catch(err => setError("Auction not found or server error."));
     }, [id]);
