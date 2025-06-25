@@ -53,7 +53,7 @@ function AuctionListPage() {
                         <div key={auction.id} className="bg-white p-4 rounded shadow">
                             <Link to={`/auctions/${auction.id}`}>
                                 <h2 className="text-xl font-semibold text-blue-600 hover:underline">
-                                    {auction.title}
+                                    {auction.name}
                                 </h2>
                             </Link>
                             <p className="text-gray-600">{auction.description}</p>
