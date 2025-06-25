@@ -31,7 +31,9 @@ export default function AuctionDetailPage() {
     }, [id]);
 
     useEffect(() => {
-        fetchAuctionAndBids();
+        (async () => {
+            await fetchAuctionAndBids();
+        })();
     }, [fetchAuctionAndBids]);
 
     if (error) return <div className="text-red-500 text-center mt-4">{error}</div>;
