@@ -5,18 +5,33 @@ import axios from "axios";
 export default function AuctionDetailPage() {
     const { id } = useParams();
     const [auction, setAuction] = useState(null);
+    const [bids, setBids] = useState([]);
     const [error, setError] = useState("");
 
-    useEffect(() => {
-        const token = localStorage.getItem("token");
+    // Fetch auction and its bids
+    const fetchAuctionAndBids = async () => {
+        try {
+            const token = localStorage.getItem("token");
 
-        axios.get(`https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
-            .then(res => setAuction(res.data))
-            .catch(err => setError("Auction not found or server error."));
+            const [auctionRes, bidsRes] = await Promise.all([
+                axios.get(`https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                }),
+                axios.get(`https://auctionbackend-4sb2.onrender.com/api/bids`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                })
+            ]);
+
+            setAuction(auctionRes.data);
+            setBids(bidsRes.data.filter(b => b.auctionId === Number(id)));
+        } catch (err) {
+            console.error(err);
+            setError("Auction not found or server error.");
+        }
+    };
+
+    useEffect(() => {
+        fetchAuctionAndBids();
     }, [id]);
 
     if (error) return <div className="text-red-500 text-center mt-4">{error}</div>;
@@ -27,7 +42,7 @@ export default function AuctionDetailPage() {
             <h1 className="text-2xl font-bold mb-2">{auction.name}</h1>
             <p className="text-gray-600 mb-4">{auction.description}</p>
 
-            <div className="space-y-2 text-sm text-gray-700">
+            <div className="space-y-2 text-sm text-gray-700 mb-6">
                 <p><strong>Category:</strong> {auction.categories.map(c => c.name).join(", ")}</p>
                 <p><strong>Starting Price:</strong> €{auction.startingPrice}</p>
                 <p><strong>Buyout Price:</strong> €{auction.buyoutPrice}</p>
@@ -38,6 +53,71 @@ export default function AuctionDetailPage() {
                 <p><strong>Seller:</strong> {auction.seller.username} ({auction.seller.firstName} {auction.seller.lastName})</p>
                 <p><strong>Seller Rating:</strong> {auction.seller.ratingAsSeller ?? "N/A"}</p>
             </div>
+
+            {/* Bid Form */}
+            <div className="border-t pt-4 mt-6">
+                <h2 className="text-lg font-semibold mb-2">Place a Bid</h2>
+                <form
+                    onSubmit={async (e) => {
+                        e.preventDefault();
+                        const form = e.target;
+                        const bidAmount = parseFloat(form.elements.amount.value);
+
+                        if (isNaN(bidAmount) || bidAmount <= auction.currentPrice) {
+                            alert("Bid must be higher than the current price.");
+                            return;
+                        }
+
+                        try {
+                            const token = localStorage.getItem("token");
+                            await axios.post(
+                                "https://auctionbackend-4sb2.onrender.com/api/bids",
+                                { amount: bidAmount, auctionId: auction.id },
+                                { headers: { Authorization: `Bearer ${token}` } }
+                            );
+
+                            form.reset();
+                            await fetchAuctionAndBids(); // Refresh data
+                        } catch (err) {
+                            console.error(err);
+                            alert("Failed to place bid.");
+                        }
+                    }}
+                    className="space-y-2"
+                >
+                    <input
+                        name="amount"
+                        type="number"
+                        step="0.01"
+                        placeholder="Your bid (€)"
+                        className="border p-2 rounded w-full"
+                        required
+                    />
+                    <button
+                        type="submit"
+                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                    >
+                        Submit Bid
+                    </button>
+                </form>
+            </div>
+
+            {/* Bid History */}
+            {bids.length > 0 && (
+                <div className="mt-8">
+                    <h2 className="text-lg font-semibold mb-2">Bid History</h2>
+                    <ul className="space-y-1 text-sm text-gray-800">
+                        {bids
+                            .sort((a, b) => new Date(b.time) - new Date(a.time))
+                            .map(bid => (
+                                <li key={bid.id} className="border-b py-1">
+                                    <span className="font-medium">€{bid.amount}</span> by {bid.bidderUsername} on{" "}
+                                    {new Date(bid.time).toLocaleString()}
+                                </li>
+                            ))}
+                    </ul>
+                </div>
+            )}
         </div>
     );
 }
