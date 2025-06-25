@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link } from "react-router-dom";
 
 function AuctionListPage() {
     const [auctions, setAuctions] = useState([]);
@@ -50,7 +51,11 @@ function AuctionListPage() {
 
                     return (
                         <div key={auction.id} className="bg-white p-4 rounded shadow">
-                            <h2 className="text-xl font-semibold">{auction.title}</h2>
+                            <Link to={`/auctions/${auction.id}`}>
+                                <h2 className="text-xl font-semibold text-blue-600 hover:underline">
+                                    {auction.title}
+                                </h2>
+                            </Link>
                             <p className="text-gray-600">{auction.description}</p>
                             <p className="text-sm text-gray-500 mt-2">Starting Price: €{auction.startingPrice}</p>
 

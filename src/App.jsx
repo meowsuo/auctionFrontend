@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 import GuestRoute from './components/GuestRoute';
 import ProtectedRoute from './components/ProtectedRoute';
 import CreateAuctionPage from './pages/CreateAuctionPage';
+import AuctionDetailPage from './pages/AuctionDetailPage';
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/create" element={<ProtectedRoute><CreateAuctionPage /></ProtectedRoute>} />
                 <Route path="*" element={<Navigate to="/auctions" />} />
+                <Route path="/auctions/:id" element={<AuctionDetailPage />} />
             </Routes>
         </div>
     );
