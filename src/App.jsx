@@ -8,6 +8,8 @@ import GuestRoute from './components/GuestRoute';
 import ProtectedRoute from './components/ProtectedRoute';
 import CreateAuctionPage from './pages/CreateAuctionPage';
 import AuctionDetailPage from './pages/AuctionDetailPage';
+import MyAuctionsPage from './pages/MyAuctionsPage';
+
 
 function App() {
     return (
@@ -22,6 +24,7 @@ function App() {
                 <Route path="/create" element={<ProtectedRoute><CreateAuctionPage /></ProtectedRoute>} />
                 <Route path="*" element={<Navigate to="/auctions" />} />
                 <Route path="/auctions/:id" element={<AuctionDetailPage />} />
+                <Route path="/my-auctions" element={<ProtectedRoute><MyAuctionsPage /></ProtectedRoute>} />
             </Routes>
         </div>
     );

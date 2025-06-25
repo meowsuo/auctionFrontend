@@ -16,9 +16,11 @@ function Navbar() {
                 <Link to="/auctions" className="text-blue-600 hover:underline">Auctions</Link>
 
                 {isLoggedIn && (
-                    <Link to="/create" className="text-blue-600 hover:underline">Create Auction</Link>
+                    <>
+                        <Link to="/create" className="text-blue-600 hover:underline">Create Auction</Link>
+                        <Link to="/my-auctions" className="text-blue-600 hover:underline">My Auctions</Link>
+                    </>
                 )}
-
                 <div className="ml-auto flex items-center space-x-4">
                     {isLoggedIn ? (
                         <>
