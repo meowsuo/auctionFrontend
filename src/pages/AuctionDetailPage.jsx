@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { createBid } from "../services/bidService";
+
 
 export default function AuctionDetailPage() {
     const { id } = useParams();
@@ -71,15 +73,9 @@ export default function AuctionDetailPage() {
                         }
 
                         try {
-                            const token = localStorage.getItem("token");
-                            await axios.post(
-                                "https://auctionbackend-4sb2.onrender.com/api/bids",
-                                { amount: bidAmount, auctionId: auction.id },
-                                { headers: { Authorization: `Bearer ${token}` } }
-                            );
-
+                            await createBid(bidAmount, auction.id);
                             form.reset();
-                            await fetchAuctionAndBids(); // Refresh data
+                            await fetchAuctionAndBids(); // Refresh auction + bids
                         } catch (err) {
                             console.error(err);
                             alert("Failed to place bid.");
