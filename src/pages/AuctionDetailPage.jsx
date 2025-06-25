@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
@@ -9,7 +9,7 @@ export default function AuctionDetailPage() {
     const [error, setError] = useState("");
 
     // Fetch auction and its bids
-    const fetchAuctionAndBids = async () => {
+    const fetchAuctionAndBids = useCallback(async () => {
         try {
             const token = localStorage.getItem("token");
 
@@ -28,11 +28,11 @@ export default function AuctionDetailPage() {
             console.error(err);
             setError("Auction not found or server error.");
         }
-    };
+    }, [id]);
 
     useEffect(() => {
         fetchAuctionAndBids();
-    }, [id]);
+    }, [fetchAuctionAndBids]);
 
     if (error) return <div className="text-red-500 text-center mt-4">{error}</div>;
     if (!auction) return <div className="text-center mt-4">Loading...</div>;
