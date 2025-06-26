@@ -54,8 +54,9 @@ export default function AuctionDetailPage() {
                 <p><strong>Location:</strong> {auction.location}, {auction.country}</p>
                 <p><strong>Start Time:</strong> {new Date(auction.startTime).toLocaleString()}</p>
                 <p><strong>End Time:</strong> {new Date(auction.endTime).toLocaleString()}</p>
-                <p><strong>Seller:</strong> {auction.seller.username} ({auction.seller.firstName} {auction.seller.lastName})</p>
+                <p><strong>Seller:</strong> {auction.seller.name} {auction.seller.lastName}</p>
                 <p><strong>Seller Rating:</strong> {auction.seller.ratingAsSeller ?? "N/A"}</p>
+                <p><strong>Number of Bids:</strong>{auction.bidCount}</p>
             </div>
 
             {/* Bid Form */}
