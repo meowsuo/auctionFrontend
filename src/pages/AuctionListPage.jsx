@@ -46,7 +46,9 @@ function AuctionListPage() {
     // Filtered auctions by selected category
     const filteredAuctions = selectedCategory === "All"
         ? auctions
-        : auctions.filter(a => a.category === selectedCategory);
+        : auctions.filter(a =>
+            a.categories.some(cat => cat.name === selectedCategory)
+        );
 
     if (loading) return <p className="text-center mt-4">Loading auctions...</p>;
     if (error) return <p className="text-center mt-4 text-red-600">{error}</p>;
