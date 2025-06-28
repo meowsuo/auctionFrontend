@@ -34,7 +34,7 @@ export default function RegisterPage() {
       localStorage.setItem("token", token);
       localStorage.setItem("username", data.username);
 
-      navigate("/auctions");
+      navigate("/login");
     } catch (err) {
       const message = err.response?.data?.message || "Registration failed";
       setError(message);
