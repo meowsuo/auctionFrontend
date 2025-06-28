@@ -8,7 +8,7 @@ function AuctionListPage() {
     const [error, setError] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [categories, setCategories] = useState(["All"]);
-
+    const [searchText, setSearchText] = useState("");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -17,7 +17,6 @@ function AuctionListPage() {
                     axios.get('https://auctionbackend-4sb2.onrender.com/api/auctions'),
                     axios.get('https://auctionbackend-4sb2.onrender.com/api/categories')
                 ]);
-
                 setAuctions(auctionsRes.data);
                 setCategories(["All", ...categoriesRes.data.map(c => c.name)]);
             } catch (err) {
@@ -27,28 +26,14 @@ function AuctionListPage() {
                 setLoading(false);
             }
         };
-
         fetchData();
     }, []);
 
-    //const handleDelete = async (id) => {
-    //    try {
-    //        const token = localStorage.getItem("token");
-    //        await axios.delete(`https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`, {
-    //            headers: { Authorization: `Bearer ${token}` }
-    //        });
-    //        setAuctions(prev => prev.filter(a => a.id !== id));
-    //    } catch (err) {
-    //        console.error("Delete failed:", err);
-    //    }
-    //};
-
-    // Filtered auctions by selected category
-    const filteredAuctions = selectedCategory === "All"
-        ? auctions
-        : auctions.filter(a =>
-            a.categories.some(cat => cat.name === selectedCategory)
-        );
+    const filteredAuctions = auctions.filter(a => {
+        const inCategory = selectedCategory === "All" || a.categories.some(cat => cat.name === selectedCategory);
+        const inSearch = a.description?.toLowerCase().includes(searchText.toLowerCase());
+        return inCategory && inSearch;
+    });
 
     if (loading) return <p className="text-center mt-4">Loading auctions...</p>;
     if (error) return <p className="text-center mt-4 text-red-600">{error}</p>;
@@ -62,6 +47,17 @@ function AuctionListPage() {
                         + Create Auction
                     </Link>
                 )}
+            </div>
+
+            <div className="mb-4">
+                <label className="block mb-1 text-sm font-medium text-gray-700">Search by Description:</label>
+                <input
+                    type="text"
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    placeholder="e.g. vintage watch"
+                    className="w-full sm:w-64 border border-gray-300 rounded-md px-3 py-2"
+                />
             </div>
 
             <div className="mb-6">
@@ -80,8 +76,6 @@ function AuctionListPage() {
             <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredAuctions.map(auction => {
                     const bidCount = auction.bids?.length || 0;
-                    const canDelete = new Date(auction.startTime) > new Date() && bidCount === 0;
-
                     const now = new Date();
                     const start = new Date(auction.startTime);
                     const end = new Date(auction.endTime);
@@ -95,10 +89,6 @@ function AuctionListPage() {
                         status = "Ended";
                         badgeColor = "bg-red-100 text-red-800";
                     }
-
-                    const highestBid = auction.bids?.length
-                        ? Math.max(...auction.bids.map(b => b.amount))
-                        : auction.startingPrice;
 
                     return (
                         <Link
