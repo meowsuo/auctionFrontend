@@ -4,11 +4,10 @@ import { Link } from "react-router-dom";
 
 function AuctionListPage() {
     const [auctions, setAuctions] = useState([]);
+    const [categories, setCategories] = useState(["All"]);
+    const [selectedCategory, setSelectedCategory] = useState("All");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedCategory, setSelectedCategory] = useState("All");
-    const [categories, setCategories] = useState(["All"]);
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -19,7 +18,8 @@ function AuctionListPage() {
                 ]);
 
                 setAuctions(auctionsRes.data);
-                setCategories(["All", ...categoriesRes.data.map(c => c.name)]);
+                const categoryNames = categoriesRes.data.map(c => c.name);
+                setCategories(["All", ...categoryNames]);
             } catch (err) {
                 console.error("Error fetching data:", err);
                 setError('Failed to load auctions or categories. Please try again later.');
@@ -31,19 +31,6 @@ function AuctionListPage() {
         fetchData();
     }, []);
 
-    //const handleDelete = async (id) => {
-    //    try {
-    //        const token = localStorage.getItem("token");
-    //        await axios.delete(`https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`, {
-    //            headers: { Authorization: `Bearer ${token}` }
-    //        });
-    //        setAuctions(prev => prev.filter(a => a.id !== id));
-    //    } catch (err) {
-    //        console.error("Delete failed:", err);
-    //    }
-    //};
-
-    // Filtered auctions by selected category
     const filteredAuctions = selectedCategory === "All"
         ? auctions
         : auctions.filter(a => a.category === selectedCategory);
@@ -77,9 +64,6 @@ function AuctionListPage() {
 
             <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredAuctions.map(auction => {
-                    const bidCount = auction.bids?.length || 0;
-                    const canDelete = new Date(auction.startTime) > new Date() && bidCount === 0;
-
                     const now = new Date();
                     const start = new Date(auction.startTime);
                     const end = new Date(auction.endTime);
@@ -93,10 +77,6 @@ function AuctionListPage() {
                         status = "Ended";
                         badgeColor = "bg-red-100 text-red-800";
                     }
-
-                    const highestBid = auction.bids?.length
-                        ? Math.max(...auction.bids.map(b => b.amount))
-                        : auction.startingPrice;
 
                     return (
                         <Link
