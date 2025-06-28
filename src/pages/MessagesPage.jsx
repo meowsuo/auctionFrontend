@@ -96,19 +96,11 @@ export default function MessagesPage() {
                         onClick={() => handleMarkAsRead(msg)}
                     >
                         <p>
-                            <span className="font-semibold">
-                                {activeTab === "inbox"
-                                    ? `From: ${msg.sender.username}`
-                                    : `To: ${msg.receiver.username}`}
-                            </span>
-                        </p>
-                        <p>
                             <strong>{msg.content}</strong>{" "}
                             {msg.unread && activeTab === "inbox" && (
                                 <span className="text-blue-500 text-xs">(new)</span>
                             )}
                         </p>
-
                         <p className="text-sm text-gray-500">
                             {new Date(msg.timestamp).toLocaleString()}
                         </p>
