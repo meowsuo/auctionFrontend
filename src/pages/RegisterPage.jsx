@@ -8,7 +8,7 @@ export default function RegisterPage() {
   const [data, setData] = useState({
     username: "", password: "", confirm: "",
     firstName: "", lastName: "", email: "",
-    phone: "", address: "", location: "", afm: ""
+    phone: "", address: "", location: "", taxNumber: ""
   });
   const [error, setError] = useState("");
 
@@ -18,20 +18,22 @@ export default function RegisterPage() {
     e.preventDefault();
     setError("");
 
-    if (data.password !== data.confirm) return setError("Passwords don't match");
+    if (data.password !== data.confirm) {
+      return setError("Passwords don't match");
+    }
 
     try {
-      // Remove confirm before sending
       const { confirm, ...payload } = data;
 
-      const response = await axios.post("https://auctionbackend-4sb2.onrender.com/api/register", payload);
+      const response = await axios.post(
+          "https://auctionbackend-4sb2.onrender.com/api/register",
+          payload
+      );
 
-      // Save JWT token
       const token = response.data.token;
       localStorage.setItem("token", token);
       localStorage.setItem("username", data.username);
 
-      // Navigate to auctions
       navigate("/auctions");
     } catch (err) {
       const message = err.response?.data?.message || "Registration failed";
@@ -54,7 +56,7 @@ export default function RegisterPage() {
             ["phone", "Phone"],
             ["address", "Address"],
             ["location", "Location"],
-            ["afm", "AFM"]
+            ["taxNumber", "Tax Number"]
           ].map(([name, label, type = "text"]) => (
               <div key={name}>
                 <label className="block text-sm">{label}</label>
