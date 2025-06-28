@@ -3,29 +3,30 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { createBid } from "../services/bidService";
 
-
 export default function AuctionDetailPage() {
     const { id } = useParams();
     const [auction, setAuction] = useState(null);
     const [bids, setBids] = useState([]);
+    const [photos, setPhotos] = useState([]);
     const [error, setError] = useState("");
 
-    // Fetch auction and its bids
     const fetchAuctionAndBids = useCallback(async () => {
         try {
             const token = localStorage.getItem("token");
 
-            const [auctionRes, bidsRes] = await Promise.all([
+            const [auctionRes, bidsRes, photosRes] = await Promise.all([
                 axios.get(`https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 }),
                 axios.get(`https://auctionbackend-4sb2.onrender.com/api/bids`, {
                     headers: { Authorization: `Bearer ${token}` }
-                })
+                }),
+                axios.get(`https://auctionbackend-4sb2.onrender.com/api/photos/auction/${id}`)
             ]);
 
             setAuction(auctionRes.data);
             setBids(bidsRes.data.filter(b => b.auctionId === Number(id)));
+            setPhotos(photosRes.data);
         } catch (err) {
             console.error(err);
             setError("Auction not found or server error.");
@@ -56,8 +57,25 @@ export default function AuctionDetailPage() {
                 <p><strong>End Time:</strong> {new Date(auction.endTime).toLocaleString()}</p>
                 <p><strong>Seller:</strong> {auction.seller.name} {auction.seller.lastName}</p>
                 <p><strong>Seller Rating:</strong> {auction.seller.rating ?? "N/A"}</p>
-                <p><strong>Number of Bids:</strong>{auction.bidCount}</p>
+                <p><strong>Number of Bids:</strong> {auction.bidCount}</p>
             </div>
+
+            {/* Photos Section */}
+            {photos.length > 0 && (
+                <div className="mb-6">
+                    <h2 className="text-lg font-semibold mb-2">Photos</h2>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        {photos.map(photo => (
+                            <img
+                                key={photo.id}
+                                src={photo.url}
+                                alt="Auction"
+                                className="w-full h-auto rounded shadow"
+                            />
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Bid Form */}
             <div className="border-t pt-4 mt-6">
@@ -76,7 +94,7 @@ export default function AuctionDetailPage() {
                         try {
                             await createBid(bidAmount, auction.id);
                             form.reset();
-                            await fetchAuctionAndBids(); // Refresh auction + bids
+                            await fetchAuctionAndBids();
                         } catch (err) {
                             console.error(err);
                             alert("Failed to place bid.");
@@ -120,7 +138,6 @@ export default function AuctionDetailPage() {
                                 </li>
                             ))}
                     </ul>
-
                 </div>
             )}
         </div>
