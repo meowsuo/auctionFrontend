@@ -13,9 +13,15 @@ export default function AuctionDetailPage() {
     // Fetch auction and its bids
     const fetchAuctionAndBids = useCallback(async () => {
         try {
+            const token = localStorage.getItem("token");
+
             const [auctionRes, bidsRes] = await Promise.all([
-                axios.get(`https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`),
-                axios.get(`https://auctionbackend-4sb2.onrender.com/api/bids`)
+                axios.get(`https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                }),
+                axios.get(`https://auctionbackend-4sb2.onrender.com/api/bids`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                })
             ]);
 
             setAuction(auctionRes.data);
