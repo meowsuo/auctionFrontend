@@ -44,13 +44,13 @@ export default function AuctionDetailPage() {
         try {
             const token = localStorage.getItem("token");
             await axios.put(
-                `https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`,
-                { status: "ENDED" },
+                `https://auctionbackend-4sb2.onrender.com/api/auctions/${id}/end`,
+                {},
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             await fetchAuctionAndBids();
         } catch (err) {
-            console.error("Buyout failed", err);
+            console.error("Buyout failed", err.response?.data || err.message);
             setError("Buyout failed.");
         }
     };
