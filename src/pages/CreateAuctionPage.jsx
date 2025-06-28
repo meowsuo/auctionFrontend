@@ -10,7 +10,7 @@ export default function CreateAuctionPage() {
         description: "",
         categories: [],
         firstBid: "",
-        buyoutPrice: "",
+        buyoutprice: "",
         location: "",
         country: "",
         start: "",
@@ -84,7 +84,7 @@ export default function CreateAuctionPage() {
                 name: data.title,
                 description: data.description,
                 startingPrice: parseFloat(data.firstBid),
-                buyoutPrice: data.buyoutPrice ? parseFloat(data.buyoutPrice) : null,
+                buyoutprice: data.buyoutprice ? parseFloat(data.buyoutprice) : null,
                 startTime: data.start,
                 endTime: data.end,
                 location: data.location,
@@ -174,7 +174,7 @@ export default function CreateAuctionPage() {
 
                 <div>
                     <label className="block font-semibold mb-1">Buyout Price (€)</label>
-                    <input name="buyoutPrice" type="number" onChange={handleChange}
+                    <input name="buyoutprice" type="number" onChange={handleChange}
                            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200" />
                 </div>
 
