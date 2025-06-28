@@ -1,37 +1,82 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
+import { useEffect, useRef, useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 
 function Navbar() {
     const { isLoggedIn, username, logout } = useAuth();
     const navigate = useNavigate();
+    const [menuOpen, setMenuOpen] = useState(false);
+    const dropdownRef = useRef(null);
 
     const handleLogout = () => {
         logout();
-        navigate("/");
+        navigate('/');
     };
 
-    return (
-        <nav className="bg-white shadow p-4 mb-4">
-            <div className="container mx-auto flex items-center space-x-4">
-                <Link to="/auctions" className="text-blue-600 hover:underline">Auctions</Link>
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setMenuOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
-                {isLoggedIn && (
-                    <>
-                        <Link to="/create" className="text-blue-600 hover:underline">Create Auction</Link>
-                        <Link to="/my-auctions" className="text-blue-600 hover:underline">My Auctions</Link>
-                    </>
-                )}
-                <div className="ml-auto flex items-center space-x-4">
+    return (
+        <nav className="bg-white border-b shadow-sm sticky top-0 z-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex justify-between h-16 items-center">
+                    {/* Logo / Home */}
+                    <Link to="/auctions" className="text-lg font-bold text-blue-600 hover:underline">
+                        Auctions
+                    </Link>
+
                     {isLoggedIn ? (
-                        <>
-                            <span className="text-gray-700">Hello, {username}</span>
-                            <button onClick={handleLogout} className="text-red-600 hover:underline">Logout</button>
-                        </>
+                        <div className="flex items-center space-x-4 relative" ref={dropdownRef}>
+                            <span className="text-sm text-gray-700">Hello, {username}</span>
+                            <button
+                                onClick={() => setMenuOpen(!menuOpen)}
+                                className="flex items-center px-3 py-1 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded"
+                            >
+                                Menu
+                                <ChevronDown className="ml-1 h-4 w-4" />
+                            </button>
+
+                            {menuOpen && (
+                                <div className="absolute right-0 top-12 w-48 bg-white border rounded shadow-md z-50">
+                                    <Link
+                                        to="/my-auctions"
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                        onClick={() => setMenuOpen(false)}
+                                    >
+                                        My Auctions
+                                    </Link>
+                                    <Link
+                                        to="/my-profile"
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                        onClick={() => setMenuOpen(false)}
+                                    >
+                                        Profile
+                                    </Link>
+                                    <button
+                                        onClick={() => {
+                                            setMenuOpen(false);
+                                            handleLogout();
+                                        }}
+                                        className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                                    >
+                                        Logout
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     ) : (
-                        <>
-                            <Link to="/login" className="text-gray-700 hover:underline">Login</Link>
-                            <Link to="/register" className="text-gray-700 hover:underline">Register</Link>
-                        </>
+                        <div className="flex space-x-4">
+                            <Link to="/login" className="text-sm text-gray-700 hover:underline">Login</Link>
+                            <Link to="/register" className="text-sm text-gray-700 hover:underline">Register</Link>
+                        </div>
                     )}
                 </div>
             </div>

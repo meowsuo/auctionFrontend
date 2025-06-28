@@ -55,7 +55,7 @@ export default function AuctionDetailPage() {
                 <p><strong>Start Time:</strong> {new Date(auction.startTime).toLocaleString()}</p>
                 <p><strong>End Time:</strong> {new Date(auction.endTime).toLocaleString()}</p>
                 <p><strong>Seller:</strong> {auction.seller.name} {auction.seller.lastName}</p>
-                <p><strong>Seller Rating:</strong> {auction.seller.ratingAsSeller ?? "N/A"}</p>
+                <p><strong>Seller Rating:</strong> {auction.seller.rating ?? "N/A"}</p>
                 <p><strong>Number of Bids:</strong>{auction.bidCount}</p>
             </div>
 
@@ -110,11 +110,17 @@ export default function AuctionDetailPage() {
                             .sort((a, b) => new Date(b.time) - new Date(a.time))
                             .map(bid => (
                                 <li key={bid.id} className="border-b py-1">
-                                    <span className="font-medium">€{bid.amount}</span> by {bid.bidderUsername} on{" "}
-                                    {new Date(bid.time).toLocaleString()}
+                                    <div><span className="font-medium">€{bid.amount}</span> by {bid.bidderFullName} (Rating: {bid.bidderRating ?? "N/A"})</div>
+                                    <div className="text-sm text-gray-600">
+                                        Location: {bid.bidderLocation ?? "N/A"}
+                                    </div>
+                                    <div className="text-sm text-gray-600">
+                                        Time: {new Date(bid.time).toLocaleString()}
+                                    </div>
                                 </li>
                             ))}
                     </ul>
+
                 </div>
             )}
         </div>

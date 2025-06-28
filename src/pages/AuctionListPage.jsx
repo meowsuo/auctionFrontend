@@ -9,11 +9,10 @@ function AuctionListPage() {
 
     useEffect(() => {
         const token = localStorage.getItem("token");
-        console.log("Using token:", token); // ✅ Debug
 
         axios.get('https://auctionbackend-4sb2.onrender.com/api/auctions', {
             headers: {
-                Authorization: `Bearer ${token}` // ✅ Set JWT here
+                Authorization: `Bearer ${token}`
             }
         })
             .then(res => {
@@ -27,11 +26,12 @@ function AuctionListPage() {
             });
     }, []);
 
-
-    // NEW: Function to delete auction
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`);
+            const token = localStorage.getItem("token");
+            await axios.delete(`https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             setAuctions(prev => prev.filter(a => a.id !== id));
         } catch (err) {
             console.error("Delete failed:", err);
@@ -42,36 +42,61 @@ function AuctionListPage() {
     if (error) return <p className="text-center mt-4 text-red-600">{error}</p>;
 
     return (
-        <div className="p-4">
-            <h1 className="text-2xl font-bold mb-4">Auctions</h1>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="p-6 max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-6">
+                <h1 className="text-3xl font-bold text-gray-800">Auctions</h1>
+                {localStorage.getItem("token") && (
+                    <Link to="/create" className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
+                        + Create Auction
+                    </Link>
+                )}
+            </div>
+
+            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {auctions.map(auction => {
                     const bidCount = auction.bids?.length || 0;
-                    const canDelete = new Date(auction.start) > new Date() && bidCount === 0;
+                    const canDelete = new Date(auction.startTime) > new Date() && bidCount === 0;
+
+                    const now = new Date();
+                    const start = new Date(auction.startTime);
+                    const end = new Date(auction.endTime);
+
+                    let status = "Upcoming";
+                    let badgeColor = "bg-yellow-100 text-yellow-800";
+                    if (now >= start && now <= end) {
+                        status = "Active";
+                        badgeColor = "bg-green-100 text-green-800";
+                    } else if (now > end) {
+                        status = "Ended";
+                        badgeColor = "bg-red-100 text-red-800";
+                    }
+
+                    const highestBid = auction.bids?.length
+                        ? Math.max(...auction.bids.map(b => b.amount))
+                        : auction.startingPrice;
 
                     return (
-                        <div key={auction.id} className="bg-white p-4 rounded shadow">
-                            <Link to={`/auctions/${auction.id}`}>
-                                <h2 className="text-xl font-semibold text-blue-600 hover:underline">
-                                    {auction.name}
-                                </h2>
-                            </Link>
-                            <p className="text-gray-600">{auction.description}</p>
-                            <p className="text-sm text-gray-500 mt-2">Starting Price: €{auction.startingPrice}</p>
+                        <Link
+                            key={auction.id}
+                            to={`/auctions/${auction.id}`}
+                            className="block rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition duration-300 p-4"
+                        >
+                            <div className="flex justify-between items-start mb-2">
+                                <h2 className="text-xl font-semibold text-blue-600">{auction.name}</h2>
+                                <span className={`text-xs font-medium px-2 py-1 rounded ${badgeColor}`}>
+                  {status}
+                </span>
+                            </div>
 
-                            {/* NEW: Show number of bids */}
-                            <p className="text-sm mt-1 text-gray-600">Bids: {bidCount}</p>
+                            <p className="text-sm text-gray-500 line-clamp-3 mb-3">{auction.description}</p>
 
-                            {/* NEW: Show delete button if eligible */}
-                            {canDelete && (
-                                <button
-                                    onClick={() => handleDelete(auction.id)}
-                                    className="mt-2 text-red-600 hover:underline"
-                                >
-                                    Delete Auction
-                                </button>
-                            )}
-                        </div>
+                            <div className="text-sm text-gray-700 space-y-1">
+                                <p><strong>Starting:</strong> €{auction.startPrice}</p>
+                                <p><strong>Current:</strong> €{auction.currentPrice}</p>
+                                <p><strong>Bids:</strong> {auction.bidCounts}</p>
+                            </div>
+
+                        </Link>
                     );
                 })}
             </div>

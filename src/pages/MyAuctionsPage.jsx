@@ -1,21 +1,24 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 
 export default function MyAuctionsPage() {
     const [auctions, setAuctions] = useState([]);
     const [error, setError] = useState("");
+    const navigate = useNavigate();
 
     const fetchMyAuctions = async () => {
         try {
             const token = localStorage.getItem("token");
-            const username = localStorage.getItem("username");
+            console.log("Token being sent:", token);
 
-            const res = await axios.get("https://auctionbackend-4sb2.onrender.com/api/auctions", {
+            const res = await axios.get("https://auctionbackend-4sb2.onrender.com/api/auctions/my-auctions", {
                 headers: { Authorization: `Bearer ${token}` }
             });
+            setAuctions(res.data);
 
-            const myAuctions = res.data.filter(a => a.seller.username === username);
-            setAuctions(myAuctions);
+            setAuctions(res.data);
         } catch (err) {
             console.error(err);
             setError("Failed to load your auctions.");
@@ -61,15 +64,25 @@ export default function MyAuctionsPage() {
                                 <p className="text-sm">Ends: {new Date(auction.endTime).toLocaleString()}</p>
                                 <p className="text-sm">Current Price: €{auction.currentPrice}</p>
 
-                                {!hasStarted && !hasBids && (
+                                <div className="flex gap-4 mt-2">
+                                    {!hasStarted && !hasBids && (
+                                        <button
+                                            onClick={() => handleDelete(auction.id)}
+                                            className="text-red-600 hover:underline"
+                                        >
+                                            Delete
+                                        </button>
+                                    )}
+
                                     <button
-                                        onClick={() => handleDelete(auction.id)}
-                                        className="mt-2 text-red-600 hover:underline"
+                                        onClick={() => navigate(`/edit-auction/${auction.id}`)}
+                                        className="text-blue-600 hover:underline"
                                     >
-                                        Delete
+                                        Edit
                                     </button>
-                                )}
+                                </div>
                             </div>
+
                         );
                     })}
                 </div>
