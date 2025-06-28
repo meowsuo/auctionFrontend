@@ -5,11 +5,11 @@ export default function MessagesPage() {
     const [inbox, setInbox] = useState([]);
     const [sent, setSent] = useState([]);
     const [activeTab, setActiveTab] = useState("inbox");
-    const [replyTo, setReplyTo] = useState(null); // message being replied to
+    const [replyTo, setReplyTo] = useState(null);
     const [replyContent, setReplyContent] = useState("");
 
     const handleMarkAsRead = async (msg) => {
-        if (!msg.unread) return; // Skip if already read
+        if (!msg.unread) return;
 
         const token = localStorage.getItem("token");
 
@@ -18,7 +18,6 @@ export default function MessagesPage() {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            // Update local state to mark the message as read
             setInbox(prev =>
                 prev.map(m => m.id === msg.id ? { ...m, unread: false } : m)
             );
@@ -60,7 +59,7 @@ export default function MessagesPage() {
         try {
             await axios.post("https://auctionbackend-4sb2.onrender.com/api/messages", {
                 content: replyContent,
-                receiverId: replyTo.sender.id
+                receiverId: replyTo.senderId
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -95,6 +94,11 @@ export default function MessagesPage() {
                         className="border-b py-2 cursor-pointer"
                         onClick={() => handleMarkAsRead(msg)}
                     >
+                        <p className="font-semibold">
+                            {activeTab === "inbox"
+                                ? `From user ID: ${msg.senderId}`
+                                : `To user ID: ${msg.receiverId}`}
+                        </p>
                         <p>
                             <strong>{msg.content}</strong>{" "}
                             {msg.unread && activeTab === "inbox" && (
@@ -107,7 +111,10 @@ export default function MessagesPage() {
                         {activeTab === "inbox" && (
                             <button
                                 className="text-sm text-indigo-600 underline mt-1"
-                                onClick={() => setReplyTo(msg)}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setReplyTo(msg);
+                                }}
                             >
                                 Reply
                             </button>
@@ -118,7 +125,7 @@ export default function MessagesPage() {
 
             {replyTo && (
                 <form onSubmit={handleReplySubmit} className="mt-4 border-t pt-4">
-                    <h3 className="font-semibold">Reply to {replyTo.sender.username}:</h3>
+                    <h3 className="font-semibold">Reply to user ID: {replyTo.senderId}</h3>
                     <textarea
                         className="w-full border p-2 mt-2"
                         rows={3}
