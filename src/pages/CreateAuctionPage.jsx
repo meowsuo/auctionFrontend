@@ -10,6 +10,7 @@ export default function CreateAuctionPage() {
         description: "",
         categories: [],
         firstBid: "",
+        buyoutPrice: "",     // ✅ added
         location: "",
         country: "",
         start: "",
@@ -83,12 +84,14 @@ export default function CreateAuctionPage() {
                 name: data.title,
                 description: data.description,
                 startingPrice: parseFloat(data.firstBid),
+                buyout_price: data.buyoutPrice ? parseFloat(data.buyoutPrice) : null, // ✅ added
                 startTime: data.start,
                 endTime: data.end,
                 location: data.location,
                 country: data.country,
                 categoryIds: data.categories
             };
+
 
             const auctionRes = await axios.post(
                 "https://auctionbackend-4sb2.onrender.com/api/auctions",
@@ -166,6 +169,12 @@ export default function CreateAuctionPage() {
                 <div>
                     <label className="block font-semibold mb-1">First Bid (€)</label>
                     <input name="firstBid" type="number" onChange={handleChange} required
+                           className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200" />
+                </div>
+
+                <div>
+                    <label className="block font-semibold mb-1">Buyout Price (€)</label>
+                    <input name="buyoutPrice" type="number" onChange={handleChange}
                            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200" />
                 </div>
 
