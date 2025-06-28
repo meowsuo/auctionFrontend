@@ -100,6 +100,7 @@ export default function CreateAuctionPage() {
                 }
             );
 
+
             const createdAuction = auctionRes.data;
 
             // Step 3: Link photo to the created auction (only if an image was uploaded)
