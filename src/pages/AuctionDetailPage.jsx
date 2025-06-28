@@ -38,11 +38,14 @@ export default function AuctionDetailPage() {
     }, [fetchAuctionAndBids]);
 
     const handleBuyout = async () => {
+        const confirmed = window.confirm(`Are you sure you want to buy out "${auction.name}" for €${auction.buyoutPrice}?`);
+        if (!confirmed) return;
+
         try {
             const token = localStorage.getItem("token");
             await axios.put(
                 `https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`,
-                { status: "Ended" },
+                { status: "ENDED" },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             await fetchAuctionAndBids();
@@ -119,6 +122,9 @@ export default function AuctionDetailPage() {
                                 alert("Bid must be higher than the current price.");
                                 return;
                             }
+
+                            const confirmBid = window.confirm(`Confirm your bid of €${bidAmount}?`);
+                            if (!confirmBid) return;
 
                             try {
                                 await createBid(bidAmount, auction.id);
