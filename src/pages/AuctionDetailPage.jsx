@@ -34,13 +34,28 @@ export default function AuctionDetailPage() {
     }, [id]);
 
     useEffect(() => {
-        (async () => {
-            await fetchAuctionAndBids();
-        })();
+        fetchAuctionAndBids();
     }, [fetchAuctionAndBids]);
+
+    const handleBuyout = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            await axios.put(
+                `https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`,
+                { status: "Ended" },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            await fetchAuctionAndBids();
+        } catch (err) {
+            console.error("Buyout failed", err);
+            setError("Buyout failed.");
+        }
+    };
 
     if (error) return <div className="text-red-500 text-center mt-4">{error}</div>;
     if (!auction) return <div className="text-center mt-4">Loading...</div>;
+
+    const isEnded = auction.status === "Ended";
 
     return (
         <div className="max-w-2xl mx-auto p-4 bg-white rounded shadow mt-4">
@@ -52,6 +67,7 @@ export default function AuctionDetailPage() {
                 <p><strong>Starting Price:</strong> €{auction.startingPrice}</p>
                 <p><strong>Buyout Price:</strong> €{auction.buyoutPrice}</p>
                 <p><strong>Current Price:</strong> €{auction.currentPrice}</p>
+                <p><strong>Status:</strong> {auction.status}</p>
                 <p><strong>Location:</strong> {auction.location}, {auction.country}</p>
                 <p><strong>Start Time:</strong> {new Date(auction.startTime).toLocaleString()}</p>
                 <p><strong>End Time:</strong> {new Date(auction.endTime).toLocaleString()}</p>
@@ -77,47 +93,61 @@ export default function AuctionDetailPage() {
                 </div>
             )}
 
-            {/* Bid Form */}
-            <div className="border-t pt-4 mt-6">
-                <h2 className="text-lg font-semibold mb-2">Place a Bid</h2>
-                <form
-                    onSubmit={async (e) => {
-                        e.preventDefault();
-                        const form = e.target;
-                        const bidAmount = parseFloat(form.elements.amount.value);
-
-                        if (isNaN(bidAmount) || bidAmount <= auction.currentPrice) {
-                            alert("Bid must be higher than the current price.");
-                            return;
-                        }
-
-                        try {
-                            await createBid(bidAmount, auction.id);
-                            form.reset();
-                            await fetchAuctionAndBids();
-                        } catch (err) {
-                            console.error(err);
-                            alert("Failed to place bid.");
-                        }
-                    }}
-                    className="space-y-2"
-                >
-                    <input
-                        name="amount"
-                        type="number"
-                        step="0.01"
-                        placeholder="Your bid (€)"
-                        className="border p-2 rounded w-full"
-                        required
-                    />
+            {/* Buyout Button */}
+            {!isEnded && (
+                <div className="mb-6">
                     <button
-                        type="submit"
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                        onClick={handleBuyout}
+                        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
                     >
-                        Submit Bid
+                        Buyout Now
                     </button>
-                </form>
-            </div>
+                </div>
+            )}
+
+            {/* Bid Form */}
+            {!isEnded && (
+                <div className="border-t pt-4 mt-6">
+                    <h2 className="text-lg font-semibold mb-2">Place a Bid</h2>
+                    <form
+                        onSubmit={async (e) => {
+                            e.preventDefault();
+                            const form = e.target;
+                            const bidAmount = parseFloat(form.elements.amount.value);
+
+                            if (isNaN(bidAmount) || bidAmount <= auction.currentPrice) {
+                                alert("Bid must be higher than the current price.");
+                                return;
+                            }
+
+                            try {
+                                await createBid(bidAmount, auction.id);
+                                form.reset();
+                                await fetchAuctionAndBids();
+                            } catch (err) {
+                                console.error(err);
+                                alert("Failed to place bid.");
+                            }
+                        }}
+                        className="space-y-2"
+                    >
+                        <input
+                            name="amount"
+                            type="number"
+                            step="0.01"
+                            placeholder="Your bid (€)"
+                            className="border p-2 rounded w-full"
+                            required
+                        />
+                        <button
+                            type="submit"
+                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                        >
+                            Submit Bid
+                        </button>
+                    </form>
+                </div>
+            )}
 
             {/* Bid History */}
             {bids.length > 0 && (
@@ -129,12 +159,8 @@ export default function AuctionDetailPage() {
                             .map(bid => (
                                 <li key={bid.id} className="border-b py-1">
                                     <div><span className="font-medium">€{bid.amount}</span> by {bid.bidderFullName} (Rating: {bid.bidderRating ?? "N/A"})</div>
-                                    <div className="text-sm text-gray-600">
-                                        Location: {bid.bidderLocation ?? "N/A"}
-                                    </div>
-                                    <div className="text-sm text-gray-600">
-                                        Time: {new Date(bid.time).toLocaleString()}
-                                    </div>
+                                    <div className="text-sm text-gray-600">Location: {bid.bidderLocation ?? "N/A"}</div>
+                                    <div className="text-sm text-gray-600">Time: {new Date(bid.time).toLocaleString()}</div>
                                 </li>
                             ))}
                     </ul>
