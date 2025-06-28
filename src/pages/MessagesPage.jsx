@@ -2,29 +2,35 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function MessagesPage() {
-    const [messages, setMessages] = useState([]);
-    const [userId, setUserId] = useState(null);
+    const [inbox, setInbox] = useState([]);
+    const [sent, setSent] = useState([]);
     const [activeTab, setActiveTab] = useState("inbox");
 
     useEffect(() => {
         const fetchMessages = async () => {
             const token = localStorage.getItem("token");
-            const res = await axios.get("https://auctionbackend-4sb2.onrender.com/api/messages", {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setMessages(res.data);
 
-            // Decode user ID from token (assuming 'id' is in the payload)
-            const decoded = JSON.parse(atob(token.split(".")[1]));
-            setUserId(decoded.id);
+            try {
+                const [inboxRes, sentRes] = await Promise.all([
+                    axios.get("https://auctionbackend-4sb2.onrender.com/api/messages/received", {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }),
+                    axios.get("https://auctionbackend-4sb2.onrender.com/api/messages/sent", {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }),
+                ]);
+
+                setInbox(inboxRes.data);
+                setSent(sentRes.data);
+            } catch (err) {
+                console.error("Failed to fetch messages", err);
+            }
         };
 
         fetchMessages();
     }, []);
 
-    const inbox = messages.filter(m => m.receiver_id === String(userId));
-    const sent = messages.filter(m => m.sender_id === String(userId));
-    const unreadCount = inbox.filter(m => m.is_unread).length;
+    const unreadCount = inbox.filter(m => m.unread).length;
 
     return (
         <div className="p-4">
@@ -42,9 +48,13 @@ export default function MessagesPage() {
                     <li key={msg.id} className="border-b py-2">
                         <p>
                             <strong>{msg.content}</strong>{" "}
-                            {msg.is_unread && activeTab === "inbox" && <span className="text-blue-500 text-xs">(new)</span>}
+                            {msg.unread && activeTab === "inbox" && (
+                                <span className="text-blue-500 text-xs">(new)</span>
+                            )}
                         </p>
-                        <p className="text-sm text-gray-500">{new Date(msg.timestamp).toLocaleString()}</p>
+                        <p className="text-sm text-gray-500">
+                            {new Date(msg.timestamp).toLocaleString()}
+                        </p>
                     </li>
                 ))}
             </ul>
