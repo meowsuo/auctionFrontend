@@ -10,6 +10,7 @@ import CreateAuctionPage from './pages/CreateAuctionPage';
 import AuctionDetailPage from './pages/AuctionDetailPage';
 import MyAuctionsPage from './pages/MyAuctionsPage';
 import EditAuctionPage from './pages/EditAuctionPage';
+import MessagesPage from './pages/MessagesPage';
 
 function App() {
     return (
@@ -25,6 +26,7 @@ function App() {
                 <Route path="/create" element={<ProtectedRoute><CreateAuctionPage /></ProtectedRoute>} />
                 <Route path="/my-auctions" element={<ProtectedRoute><MyAuctionsPage /></ProtectedRoute>} />
                 <Route path="/edit-auction/:id" element={<ProtectedRoute><EditAuctionPage /></ProtectedRoute>} />
+                <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
                 <Route path="*" element={<Navigate to="/auctions" />} />
             </Routes>
         </div>
