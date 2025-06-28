@@ -43,16 +43,22 @@ export default function AuctionDetailPage() {
 
         try {
             const token = localStorage.getItem("token");
+
+            // Step 1: Place a bid with the buyout price
+            await createBid(auction.buyoutPrice, auction.id);
+
+            // Step 2: Trigger the buyout (end the auction)
             await axios.put(
                 `https://auctionbackend-4sb2.onrender.com/api/auctions/${id}/end`,
-                {}, // PUT requires a body, even if it's empty
+                {},
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 }
             );
-            await fetchAuctionAndBids(); // refresh UI
+
+            await fetchAuctionAndBids(); // Refresh UI
         } catch (err) {
             console.error("Buyout failed:", err.response?.data || err.message);
             setError("Buyout failed.");
