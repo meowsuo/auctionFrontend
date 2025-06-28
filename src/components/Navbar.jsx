@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import { useEffect, useRef, useState } from 'react';
-import { ChevronDown, Folder } from 'lucide-react';
+import { ChevronDown, Mail } from 'lucide-react';
 
 function Navbar() {
     const { isLoggedIn, username, logout } = useAuth();
@@ -43,8 +43,9 @@ function Navbar() {
                                 className="text-gray-700 hover:text-blue-600"
                                 title="Messages"
                             >
-                                <Folder className="w-5 h-5" />
+                                <Mail className="w-5 h-5" />
                             </Link>
+
 
                             <button
                                 onClick={() => setMenuOpen(!menuOpen)}
