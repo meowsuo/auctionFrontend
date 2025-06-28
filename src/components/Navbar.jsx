@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import { useEffect, useRef, useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Folder } from 'lucide-react';
 
 function Navbar() {
     const { isLoggedIn, username, logout } = useAuth();
@@ -36,6 +36,16 @@ function Navbar() {
                     {isLoggedIn ? (
                         <div className="flex items-center space-x-4 relative" ref={dropdownRef}>
                             <span className="text-sm text-gray-700">Hello, {username}</span>
+
+                            {/* Messages icon link */}
+                            <Link
+                                to="/messages"
+                                className="text-gray-700 hover:text-blue-600"
+                                title="Messages"
+                            >
+                                <Folder className="w-5 h-5" />
+                            </Link>
+
                             <button
                                 onClick={() => setMenuOpen(!menuOpen)}
                                 className="flex items-center px-3 py-1 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded"
@@ -59,13 +69,6 @@ function Navbar() {
                                         onClick={() => setMenuOpen(false)}
                                     >
                                         Profile
-                                    </Link>
-                                    <Link
-                                        to="/messages"
-                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                        onClick={() => setMenuOpen(false)}
-                                    >
-                                        Messages
                                     </Link>
                                     <button
                                         onClick={() => {
