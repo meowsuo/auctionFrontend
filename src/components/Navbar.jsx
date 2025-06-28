@@ -7,6 +7,7 @@ function Navbar() {
     const { isLoggedIn, username, logout } = useAuth();
     const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState(false);
+    const [hasUnread, setHasUnread] = useState(false);
     const dropdownRef = useRef(null);
 
     const handleLogout = () => {
@@ -24,6 +25,32 @@ function Navbar() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
+    useEffect(() => {
+        const fetchUnreadStatus = async () => {
+            const token = localStorage.getItem("token");
+            if (!token) return;
+
+            try {
+                const res = await fetch("https://auctionbackend-4sb2.onrender.com/api/messages/unread/count", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (res.ok) {
+                    const count = await res.json();
+                    setHasUnread(count > 0);
+                }
+            } catch (err) {
+                console.error("Failed to fetch unread count", err);
+            }
+        };
+
+        if (isLoggedIn) {
+            fetchUnreadStatus();
+        }
+    }, [isLoggedIn]);
+
     return (
         <nav className="bg-white border-b shadow-sm sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -37,15 +64,17 @@ function Navbar() {
                         <div className="flex items-center space-x-4 relative" ref={dropdownRef}>
                             <span className="text-sm text-gray-700">Hello, {username}</span>
 
-                            {/* Messages icon link */}
+                            {/* Messages icon link with red dot if unread */}
                             <Link
                                 to="/messages"
-                                className="text-gray-700 hover:text-blue-600"
+                                className="relative text-gray-700 hover:text-blue-600"
                                 title="Messages"
                             >
                                 <Mail className="w-5 h-5" />
+                                {hasUnread && (
+                                    <span className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full" />
+                                )}
                             </Link>
-
 
                             <button
                                 onClick={() => setMenuOpen(!menuOpen)}
