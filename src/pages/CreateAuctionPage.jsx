@@ -10,7 +10,7 @@ export default function CreateAuctionPage() {
         description: "",
         categories: [],
         firstBid: "",
-        buyoutPrice: "",     // ✅ added
+        buyoutPrice: "",
         location: "",
         country: "",
         start: "",
@@ -84,7 +84,7 @@ export default function CreateAuctionPage() {
                 name: data.title,
                 description: data.description,
                 startingPrice: parseFloat(data.firstBid),
-                buyout_price: data.buyoutPrice,
+                buyoutPrice: data.buyoutPrice,
                 startTime: data.start,
                 endTime: data.end,
                 location: data.location,
