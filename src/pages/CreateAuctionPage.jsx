@@ -84,7 +84,7 @@ export default function CreateAuctionPage() {
                 name: data.title,
                 description: data.description,
                 startingPrice: parseFloat(data.firstBid),
-                buyoutPrice: data.buyoutPrice,
+                buyoutPrice: data.buyoutPrice ? parseFloat(data.buyoutPrice) : null,
                 startTime: data.start,
                 endTime: data.end,
                 location: data.location,
