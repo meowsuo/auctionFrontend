@@ -26,7 +26,7 @@ export default function RegisterPage() {
       const { confirm, ...payload } = data;
 
       const response = await axios.post(
-          "https://auctionbackend-4sb2.onrender.com/api/auctions",
+          "https://auctionbackend-4sb2.onrender.com/api/users",
           payload
       );
 
