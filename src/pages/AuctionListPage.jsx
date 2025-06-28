@@ -7,18 +7,28 @@ function AuctionListPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState("All");
+    const [categories, setCategories] = useState(["All"]);
+
 
     useEffect(() => {
-        axios.get('https://auctionbackend-4sb2.onrender.com/api/auctions')
-            .then(res => {
-                setAuctions(res.data);
+        const fetchData = async () => {
+            try {
+                const [auctionsRes, categoriesRes] = await Promise.all([
+                    axios.get('https://auctionbackend-4sb2.onrender.com/api/auctions'),
+                    axios.get('https://auctionbackend-4sb2.onrender.com/api/categories')
+                ]);
+
+                setAuctions(auctionsRes.data);
+                setCategories(["All", ...categoriesRes.data.map(c => c.name)]);
+            } catch (err) {
+                console.error("Error fetching data:", err);
+                setError('Failed to load auctions or categories. Please try again later.');
+            } finally {
                 setLoading(false);
-            })
-            .catch(err => {
-                console.error("Error fetching auctions:", err);
-                setError('Failed to load auctions. Please log in again or try later.');
-                setLoading(false);
-            });
+            }
+        };
+
+        fetchData();
     }, []);
 
     //const handleDelete = async (id) => {
@@ -32,9 +42,6 @@ function AuctionListPage() {
     //        console.error("Delete failed:", err);
     //    }
     //};
-
-    // Derive unique categories from auctions
-    const categories = ["All", ...new Set(auctions.map(a => a.category).filter(Boolean))];
 
     // Filtered auctions by selected category
     const filteredAuctions = selectedCategory === "All"
