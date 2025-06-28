@@ -9,13 +9,7 @@ function AuctionListPage() {
     const [selectedCategory, setSelectedCategory] = useState("All");
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-
-        axios.get('https://auctionbackend-4sb2.onrender.com/api/auctions', {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
+        axios.get('https://auctionbackend-4sb2.onrender.com/api/auctions')
             .then(res => {
                 setAuctions(res.data);
                 setLoading(false);
@@ -27,17 +21,17 @@ function AuctionListPage() {
             });
     }, []);
 
-    const handleDelete = async (id) => {
-        try {
-            const token = localStorage.getItem("token");
-            await axios.delete(`https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setAuctions(prev => prev.filter(a => a.id !== id));
-        } catch (err) {
-            console.error("Delete failed:", err);
-        }
-    };
+    //const handleDelete = async (id) => {
+    //    try {
+    //        const token = localStorage.getItem("token");
+    //        await axios.delete(`https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`, {
+    //            headers: { Authorization: `Bearer ${token}` }
+    //        });
+    //        setAuctions(prev => prev.filter(a => a.id !== id));
+    //    } catch (err) {
+    //        console.error("Delete failed:", err);
+    //    }
+    //};
 
     // Derive unique categories from auctions
     const categories = ["All", ...new Set(auctions.map(a => a.category).filter(Boolean))];
