@@ -13,5 +13,5 @@ Install dependencies:
 npm install
 
 Environment configuration:
-1. Copy `.env.example` to `.env`.
+1. Copy `.env.example` to `.env` for local.
 2. Adjust `VITE_API_BASE_URL` if your backend runs elsewhere.
