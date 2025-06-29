@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import api from "../services/api";
 
 export default function ProfilePage() {
