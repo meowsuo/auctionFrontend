@@ -38,8 +38,8 @@ function Navbar() {
                     },
                 });
 
-                if (res.ok) {
-                    const count = await res.json();
+                if (res.status === 200) {
+                    const count = await res.data;
                     setHasUnread(count > 0);
                 }
             } catch (err) {
@@ -85,7 +85,6 @@ function Navbar() {
                                 <ChevronDown className="ml-1 h-4 w-4" />
                             </button>
 
-
                             {menuOpen && (
                                 <div className="absolute right-0 top-12 w-48 bg-white border rounded shadow-md z-50">
                                     <Link
@@ -96,7 +95,7 @@ function Navbar() {
                                         My Auctions
                                     </Link>
                                     <Link
-                                        to="/my-profile"
+                                        to="/profile"
                                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                         onClick={() => setMenuOpen(false)}
                                     >
