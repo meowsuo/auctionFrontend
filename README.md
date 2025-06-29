@@ -12,8 +12,6 @@ cd auctionFrontend
 Install dependencies:
 npm install
 
-Run the app locally (will not properly connect to the back-end):
-npm run dev
-
-Deploy on Github Pages
-npm run deploy
+Environment configuration:
+1. Copy `.env.example` to `.env`.
+2. Adjust `VITE_API_BASE_URL` if your backend runs elsewhere.
