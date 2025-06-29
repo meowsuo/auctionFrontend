@@ -11,7 +11,6 @@ import AuctionDetailPage from './pages/AuctionDetailPage';
 import MyAuctionsPage from './pages/MyAuctionsPage';
 import EditAuctionPage from './pages/EditAuctionPage';
 import MessagesPage from './pages/MessagesPage';
-import ProfilePage from './pages/ProfilePage'; // ✅ import the ProfilePage
 
 function App() {
     return (
@@ -28,7 +27,6 @@ function App() {
                 <Route path="/my-auctions" element={<ProtectedRoute><MyAuctionsPage /></ProtectedRoute>} />
                 <Route path="/edit-auction/:id" element={<ProtectedRoute><EditAuctionPage /></ProtectedRoute>} />
                 <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
-                <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} /> {/* ✅ Added here */}
                 <Route path="*" element={<Navigate to="/auctions" />} />
             </Routes>
         </div>
