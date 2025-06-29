@@ -32,7 +32,7 @@ export default function ProfilePage() {
 
         const fetchUser = async () => {
             try {
-                const res = await api.get(`/api/users/${userId}`, {
+                const res = await api.get(`/api/users/username/${userId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setUser(res.data);
