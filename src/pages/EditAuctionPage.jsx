@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../services/api";
 
 export default function EditAuctionPage() {
     const { id } = useParams();
@@ -14,7 +14,7 @@ export default function EditAuctionPage() {
         const fetchAuction = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const res = await axios.get(`https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`, {
+                const res = await api.get(`/api/auctions/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
@@ -39,7 +39,7 @@ export default function EditAuctionPage() {
         try {
             const token = localStorage.getItem("token");
 
-            await axios.put(`https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`, {
+            await api.put(`/api/auctions/${id}`, {
                 description,
                 endTime
             }, {
@@ -65,7 +65,7 @@ export default function EditAuctionPage() {
                 return;
             }
 
-            await axios.delete(`https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`, {
+            await api.delete(`/api/auctions/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

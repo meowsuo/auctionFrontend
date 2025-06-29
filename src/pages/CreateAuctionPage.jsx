@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
 
 export default function CreateAuctionPage() {
     const navigate = useNavigate();
@@ -24,7 +24,7 @@ export default function CreateAuctionPage() {
         const fetchCategories = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const res = await axios.get("https://auctionbackend-4sb2.onrender.com/api/categories", {
+                const res = await api.get("/api/categories", {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -63,8 +63,8 @@ export default function CreateAuctionPage() {
                 const imageForm = new FormData();
                 imageForm.append("file", data.photo);
 
-                const uploadRes = await axios.post(
-                    "https://auctionbackend-4sb2.onrender.com/api/images/upload",
+                const uploadRes = await api.post(
+                    "/api/images/upload",
                     imageForm,
                     {
                         headers: {
@@ -92,8 +92,8 @@ export default function CreateAuctionPage() {
             };
 
 
-            const auctionRes = await axios.post(
-                "https://auctionbackend-4sb2.onrender.com/api/auctions",
+            const auctionRes = await api.post(
+                "/api/auctions",
                 auctionData,
                 {
                     headers: {
@@ -107,8 +107,8 @@ export default function CreateAuctionPage() {
 
             // Save photo to DB if uploaded
             if (imageUrl) {
-                await axios.post(
-                    "https://auctionbackend-4sb2.onrender.com/api/photos",
+                await api.post(
+                    "/api/photos",
                     null,
                     {
                         params: {

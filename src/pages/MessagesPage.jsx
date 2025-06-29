@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Dialog } from "@headlessui/react";
 import { motion } from "framer-motion";
+import api from "../services/api";
 
 export default function MessagesPage() {
     const [inbox, setInbox] = useState([]);
@@ -17,10 +17,10 @@ export default function MessagesPage() {
 
             try {
                 const [inboxRes, sentRes] = await Promise.all([
-                    axios.get("https://auctionbackend-4sb2.onrender.com/api/messages/received", {
+                    api.get("/api/messages/received", {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get("https://auctionbackend-4sb2.onrender.com/api/messages/sent", {
+                    api.get("/api/messages/sent", {
                         headers: { Authorization: `Bearer ${token}` }
                     })
                 ]);
@@ -43,7 +43,7 @@ export default function MessagesPage() {
         if (msg.unread) {
             try {
                 const token = localStorage.getItem("token");
-                await axios.put(`https://auctionbackend-4sb2.onrender.com/api/messages/${msg.id}/read`, {}, {
+                await api.put(`/api/messages/${msg.id}/read`, {}, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
@@ -60,7 +60,7 @@ export default function MessagesPage() {
     const handleReply = async () => {
         try {
             const token = localStorage.getItem("token");
-            await axios.post("https://auctionbackend-4sb2.onrender.com/api/messages", {
+            await api.post("/api/messages", {
                 content: replyContent,
                 receiverId: selectedMessage.senderId
             }, {

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import api from "../services/api";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -25,8 +25,8 @@ export default function RegisterPage() {
     try {
       const { confirm, ...payload } = data;
 
-      const response = await axios.post(
-          "https://auctionbackend-4sb2.onrender.com/api/users",
+      const response = await api.post(
+          "/api/users",
           payload
       );
 

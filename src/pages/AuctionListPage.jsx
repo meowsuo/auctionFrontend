@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Link } from "react-router-dom";
+import api from '../services/api';
 
 function AuctionListPage() {
     const [auctions, setAuctions] = useState([]);
@@ -14,8 +14,8 @@ function AuctionListPage() {
         const fetchData = async () => {
             try {
                 const [auctionsRes, categoriesRes] = await Promise.all([
-                    axios.get('https://auctionbackend-4sb2.onrender.com/api/auctions'),
-                    axios.get('https://auctionbackend-4sb2.onrender.com/api/categories')
+                    api.get('/api/auctions'),
+                    api.get('/api/categories')
                 ]);
                 setAuctions(auctionsRes.data);
                 setCategories(["All", ...categoriesRes.data.map(c => c.name)]);

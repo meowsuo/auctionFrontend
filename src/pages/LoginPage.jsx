@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../context/useAuth';
+import api from "../services/api";
 
 function LoginPage() {
   const { login } = useAuth();
@@ -18,7 +18,7 @@ function LoginPage() {
     setError("");
 
     try {
-      const response = await axios.post("https://auctionbackend-4sb2.onrender.com/api/auth/login", credentials);
+      const response = await api.post("/api/auth/login", credentials);
 
       const token = response.data.token;
       login(token, credentials.username);
