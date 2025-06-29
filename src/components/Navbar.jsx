@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import { useEffect, useRef, useState } from 'react';
 import { ChevronDown, Mail } from 'lucide-react';
+import api from '../services/api';
 
 function Navbar() {
     const { isLoggedIn, username, logout } = useAuth();
@@ -31,7 +32,7 @@ function Navbar() {
             if (!token) return;
 
             try {
-                const res = await fetch("https://auctionbackend-4sb2.onrender.com/api/messages/unread/count", {
+                const res = await api.get('/api/messages/unread/count', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

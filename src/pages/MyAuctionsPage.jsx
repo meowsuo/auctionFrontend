@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import api from "../services/api";
 
 
 export default function MyAuctionsPage() {
@@ -13,7 +13,7 @@ export default function MyAuctionsPage() {
             const token = localStorage.getItem("token");
             console.log("Token being sent:", token);
 
-            const res = await axios.get("https://auctionbackend-4sb2.onrender.com/api/auctions/my-auctions", {
+            const res = await api.get("/api/auctions/my-auctions", {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setAuctions(res.data);
@@ -32,7 +32,7 @@ export default function MyAuctionsPage() {
     const handleDelete = async (id) => {
         try {
             const token = localStorage.getItem("token");
-            await axios.delete(`https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`, {
+            await api.delete(`/api/auctions/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setAuctions(prev => prev.filter(a => a.id !== id));

@@ -1,12 +1,12 @@
-import axios from 'axios';
+import api from './api';
 
-const API_URL = 'https://auctionbackend-4sb2.onrender.com/api/bids';
+const API_URL = '/api/bids';
 
 export const createBid = async (amount, auctionId) => {
     const token = localStorage.getItem("token");
 
     try {
-        const response = await axios.post(
+        const response = await api.post(
             API_URL,
             { amount, auctionId },
             {

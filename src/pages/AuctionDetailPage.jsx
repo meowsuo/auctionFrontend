@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import { createBid } from "../services/bidService";
+import api from "../services/api";
 
 export default function AuctionDetailPage() {
     const { id } = useParams();
@@ -15,13 +15,13 @@ export default function AuctionDetailPage() {
             const token = localStorage.getItem("token");
 
             const [auctionRes, bidsRes, photosRes] = await Promise.all([
-                axios.get(`https://auctionbackend-4sb2.onrender.com/api/auctions/${id}`, {
+                api.get(`/api/auctions/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 }),
-                axios.get(`https://auctionbackend-4sb2.onrender.com/api/bids`, {
+                api.get(`/api/bids`, {
                     headers: { Authorization: `Bearer ${token}` }
                 }),
-                axios.get(`https://auctionbackend-4sb2.onrender.com/api/photos/auction/${id}`)
+                api.get(`/api/photos/auction/${id}`)
             ]);
 
             setAuction(auctionRes.data);
@@ -48,8 +48,8 @@ export default function AuctionDetailPage() {
             await createBid(auction.buyoutPrice, auction.id);
 
             // Step 2: Trigger the buyout (end the auction)
-            await axios.put(
-                `https://auctionbackend-4sb2.onrender.com/api/auctions/${id}/end`,
+            await api.put(
+                `/api/auctions/${id}/end`,
                 {},
                 {
                     headers: {
