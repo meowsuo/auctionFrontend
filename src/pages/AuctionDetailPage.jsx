@@ -1,19 +1,27 @@
 import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { createBid } from "../services/bidService";
 import api from "../services/api";
 
 export default function AuctionDetailPage() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [auction, setAuction] = useState(null);
     const [bids, setBids] = useState([]);
     const [photos, setPhotos] = useState([]);
     const [error, setError] = useState("");
 
     const fetchAuctionAndBids = useCallback(async () => {
-        try {
-            const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token");
 
+        if (!token) {
+            navigate("/login", {
+                state: { message: "Please log in to view and participate in auctions." }
+            });
+            return;
+        }
+
+        try {
             const [auctionRes, bidsRes, photosRes] = await Promise.all([
                 api.get(`/api/auctions/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
@@ -31,7 +39,7 @@ export default function AuctionDetailPage() {
             console.error(err);
             setError("Auction not found or server error.");
         }
-    }, [id]);
+    }, [id, navigate]);
 
     useEffect(() => {
         fetchAuctionAndBids();
