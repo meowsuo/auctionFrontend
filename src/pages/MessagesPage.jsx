@@ -1,30 +1,15 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { Dialog } from "@headlessui/react";
+import { motion } from "framer-motion";
+import api from "../services/api";
 
 export default function MessagesPage() {
     const [inbox, setInbox] = useState([]);
     const [sent, setSent] = useState([]);
     const [activeTab, setActiveTab] = useState("inbox");
-    const [replyTo, setReplyTo] = useState(null);
+    const [selectedMessage, setSelectedMessage] = useState(null);
+    const [isReplyOpen, setIsReplyOpen] = useState(false);
     const [replyContent, setReplyContent] = useState("");
-
-    const handleMarkAsRead = async (msg) => {
-        if (!msg.unread) return;
-
-        const token = localStorage.getItem("token");
-
-        try {
-            await axios.put(`https://auctionbackend-4sb2.onrender.com/api/messages/${msg.id}/read`, {}, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-
-            setInbox(prev =>
-                prev.map(m => m.id === msg.id ? { ...m, unread: false } : m)
-            );
-        } catch (err) {
-            console.error("Failed to mark message as read", err);
-        }
-    };
 
     useEffect(() => {
         const fetchMessages = async () => {
@@ -32,12 +17,12 @@ export default function MessagesPage() {
 
             try {
                 const [inboxRes, sentRes] = await Promise.all([
-                    axios.get("https://auctionbackend-4sb2.onrender.com/api/messages/received", {
+                    api.get("/api/messages/received", {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get("https://auctionbackend-4sb2.onrender.com/api/messages/sent", {
+                    api.get("/api/messages/sent", {
                         headers: { Authorization: `Bearer ${token}` }
-                    }),
+                    })
                 ]);
 
                 setInbox(inboxRes.data);
@@ -52,97 +37,130 @@ export default function MessagesPage() {
 
     const unreadCount = inbox.filter(m => m.unread).length;
 
-    const handleReplySubmit = async (e) => {
-        e.preventDefault();
-        const token = localStorage.getItem("token");
+    const handleSelectMessage = async (msg) => {
+        setSelectedMessage(msg);
 
-        try {
-            await axios.post("https://auctionbackend-4sb2.onrender.com/api/messages", {
-                content: replyContent,
-                receiverId: replyTo.senderId
-            }, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                }
-            });
+        if (msg.unread) {
+            try {
+                const token = localStorage.getItem("token");
+                await api.put(`/api/messages/${msg.id}/read`, {}, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
 
-            alert("Message sent!");
-            setReplyTo(null);
-            setReplyContent("");
-        } catch (err) {
-            console.error("Failed to send reply", err);
-            alert("Failed to send message. You must have bid on their auction.");
+                // Update local state
+                setInbox(prev =>
+                    prev.map(m => (m.id === msg.id ? { ...m, unread: false } : m))
+                );
+            } catch (err) {
+                console.error("Failed to mark as read", err);
+            }
         }
     };
 
+    const handleReply = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            await api.post("/api/messages", {
+                content: replyContent,
+                receiverId: selectedMessage.senderId
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            setReplyContent("");
+            setIsReplyOpen(false);
+        } catch (err) {
+            console.error("Failed to send reply", err);
+        }
+    };
+
+    const messages = activeTab === "inbox" ? inbox : sent;
+
     return (
-        <div className="p-4">
-            <div className="flex space-x-4 mb-4">
-                <button onClick={() => setActiveTab("inbox")} className={activeTab === "inbox" ? "font-bold" : ""}>
-                    Inbox {unreadCount > 0 && <span className="text-red-500">({unreadCount})</span>}
+        <div className="p-6 max-w-3xl mx-auto">
+            <div className="flex space-x-4 mb-6">
+                <button
+                    onClick={() => setActiveTab("inbox")}
+                    className={`px-4 py-2 rounded ${activeTab === "inbox" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+                >
+                    Inbox {unreadCount > 0 && <span className="ml-1 text-sm text-red-400">({unreadCount})</span>}
                 </button>
-                <button onClick={() => setActiveTab("sent")} className={activeTab === "sent" ? "font-bold" : ""}>
+                <button
+                    onClick={() => setActiveTab("sent")}
+                    className={`px-4 py-2 rounded ${activeTab === "sent" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+                >
                     Sent
                 </button>
             </div>
 
-            <ul>
-                {(activeTab === "inbox" ? inbox : sent).map(msg => (
-                    <li
+            <ul className="space-y-2">
+                {messages.map(msg => (
+                    <motion.li
                         key={msg.id}
-                        className="border-b py-2 cursor-pointer"
-                        onClick={() => handleMarkAsRead(msg)}
+                        layout
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className={`p-4 rounded border shadow-sm cursor-pointer hover:bg-gray-50 transition-all ${
+                            msg.unread && activeTab === "inbox" ? "border-blue-500 bg-blue-50" : "border-gray-200"
+                        }`}
+                        onClick={() => handleSelectMessage(msg)}
                     >
-                        <p className="font-semibold">
-                            {activeTab === "inbox"
-                                ? `From user ID: ${msg.senderId}`
-                                : `To user ID: ${msg.receiverId}`}
-                        </p>
-                        <p>
-                            <strong>{msg.content}</strong>{" "}
+                        <div className="flex justify-between items-center">
+                            <p className="text-sm font-medium text-gray-800">
+                                {msg.content}
+                            </p>
                             {msg.unread && activeTab === "inbox" && (
-                                <span className="text-blue-500 text-xs">(new)</span>
+                                <span className="text-xs text-blue-600 font-semibold">● New</span>
                             )}
-                        </p>
-                        <p className="text-sm text-gray-500">
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">
                             {new Date(msg.timestamp).toLocaleString()}
                         </p>
                         {activeTab === "inbox" && (
                             <button
-                                className="text-sm text-indigo-600 underline mt-1"
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    setReplyTo(msg);
+                                    setIsReplyOpen(true);
                                 }}
+                                className="mt-2 text-sm text-blue-500 hover:underline"
                             >
                                 Reply
                             </button>
                         )}
-                    </li>
+                    </motion.li>
                 ))}
             </ul>
 
-            {replyTo && (
-                <form onSubmit={handleReplySubmit} className="mt-4 border-t pt-4">
-                    <h3 className="font-semibold">Reply to user ID: {replyTo.senderId}</h3>
-                    <textarea
-                        className="w-full border p-2 mt-2"
-                        rows={3}
-                        value={replyContent}
-                        onChange={(e) => setReplyContent(e.target.value)}
-                        required
-                    />
-                    <div className="mt-2 flex space-x-2">
-                        <button type="submit" className="bg-blue-500 text-white px-3 py-1 rounded">
-                            Send
-                        </button>
-                        <button type="button" onClick={() => setReplyTo(null)} className="text-gray-500">
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            )}
+            {/* Reply Modal */}
+            <Dialog open={isReplyOpen} onClose={() => setIsReplyOpen(false)} className="relative z-50">
+                <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+                <div className="fixed inset-0 flex items-center justify-center p-4">
+                    <Dialog.Panel className="bg-white rounded p-6 w-full max-w-md shadow-lg">
+                        <Dialog.Title className="text-lg font-bold mb-2">Reply to Message</Dialog.Title>
+                        <textarea
+                            className="w-full border border-gray-300 rounded p-2 mb-4"
+                            rows="4"
+                            placeholder="Type your reply..."
+                            value={replyContent}
+                            onChange={(e) => setReplyContent(e.target.value)}
+                        />
+                        <div className="flex justify-end space-x-2">
+                            <button
+                                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                                onClick={() => setIsReplyOpen(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                onClick={handleReply}
+                            >
+                                Send
+                            </button>
+                        </div>
+                    </Dialog.Panel>
+                </div>
+            </Dialog>
         </div>
     );
 }
