@@ -1,11 +1,14 @@
 import { useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from '../context/useAuth';
 import api from "../services/api";
 
 function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectMessage = location.state?.message;
+
   const [credentials, setCredentials] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
 
@@ -32,7 +35,13 @@ function LoginPage() {
   return (
       <div className="max-w-sm mx-auto mt-8 bg-white p-6 rounded shadow">
         <h2 className="text-xl font-bold mb-4">Login</h2>
-        {error && <p className="text-red-500">{error}</p>}
+
+        {redirectMessage && (
+            <p className="text-yellow-600 mb-2">{redirectMessage}</p>
+        )}
+
+        {error && <p className="text-red-500 mb-2">{error}</p>}
+
         <form onSubmit={handleSubmit} className="space-y-3">
           <div>
             <label className="block mb-1">Username</label>
