@@ -28,7 +28,7 @@ function App() {
                 <Route path="/my-auctions" element={<ProtectedRoute><MyAuctionsPage /></ProtectedRoute>} />
                 <Route path="/edit-auction/:id" element={<ProtectedRoute><EditAuctionPage /></ProtectedRoute>} />
                 <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
-                <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} /> {/* ✅ Added here */}
+                <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
                 <Route path="*" element={<Navigate to="/auctions" />} />
             </Routes>
         </div>
