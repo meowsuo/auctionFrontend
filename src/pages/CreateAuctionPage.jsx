@@ -58,7 +58,7 @@ export default function CreateAuctionPage() {
         try {
             let imageUrl = "";
 
-            // Step 1: Upload image
+            // Upload image
             if (data.photo) {
                 const imageForm = new FormData();
                 imageForm.append("file", data.photo);
@@ -74,12 +74,11 @@ export default function CreateAuctionPage() {
                     }
                 );
 
-                // No need for JSON.parse here
                 const uploadData = uploadRes.data;
                 imageUrl = uploadData.data.link;
             }
 
-            // Step 2: Create auction
+            // Create auction
             const auctionData = {
                 name: data.title,
                 description: data.description,
@@ -106,7 +105,7 @@ export default function CreateAuctionPage() {
 
             const createdAuction = auctionRes.data;
 
-            // Step 3: Save photo to DB if uploaded
+            // Save photo to DB if uploaded
             if (imageUrl) {
                 await axios.post(
                     "https://auctionbackend-4sb2.onrender.com/api/photos",
