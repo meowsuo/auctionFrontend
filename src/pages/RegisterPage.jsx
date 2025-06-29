@@ -36,7 +36,7 @@ export default function RegisterPage() {
 
       navigate("/login");
     } catch (err) {
-      const message = err.response?.data?.message || "Registration failed";
+      const message = err.response?.data?.message || "Username already exists";
       setError(message);
     }
   };
