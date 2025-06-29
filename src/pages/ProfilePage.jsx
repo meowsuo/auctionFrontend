@@ -65,7 +65,7 @@ export default function ProfilePage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await api.put(`/api/users/${userId}`, formData, {
+            await api.put(`/api/users/username/${userId}`, formData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             alert("Profile updated successfully!");
