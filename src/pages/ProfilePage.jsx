@@ -6,13 +6,16 @@ export default function ProfilePage() {
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [formData, setFormData] = useState({
+        username: "",
         firstName: "",
         lastName: "",
         email: "",
         phone: "",
         address: "",
         location: "",
-        taxNumber: ""
+        taxNumber: "",
+        ratingAsSeller: 0,
+        ratingAsBidder: 0
     });
 
     const token = localStorage.getItem("token");
@@ -37,13 +40,16 @@ export default function ProfilePage() {
                 });
                 setUser(res.data);
                 setFormData({
+                    username: res.data.username || "",
                     firstName: res.data.firstName || "",
                     lastName: res.data.lastName || "",
                     email: res.data.email || "",
                     phone: res.data.phone || "",
                     address: res.data.address || "",
                     location: res.data.location || "",
-                    taxNumber: res.data.taxNumber || ""
+                    taxNumber: res.data.taxNumber || "",
+                    ratingAsSeller: res.data.ratingAsSeller || 0,
+                    ratingAsBidder: res.data.ratingAsBidder || 0
                 });
             } catch (err) {
                 console.error("Failed to fetch user profile", err);
@@ -117,6 +123,11 @@ export default function ProfilePage() {
                     <input type="text" name="taxNumber" value={formData.taxNumber} onChange={handleChange}
                            className="w-full mt-1 p-2 border rounded" />
                 </div>
+
+                {/* Hidden or disabled fields */}
+                <input type="hidden" name="username" value={formData.username} />
+                <input type="hidden" name="ratingAsSeller" value={formData.ratingAsSeller} />
+                <input type="hidden" name="ratingAsBidder" value={formData.ratingAsBidder} />
 
                 <button
                     type="submit"
