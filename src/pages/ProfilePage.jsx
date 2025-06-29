@@ -16,23 +16,23 @@ export default function ProfilePage() {
     });
 
     const token = localStorage.getItem("token");
-    let userId = null;
+    let username = null;
 
     if (token) {
         try {
             const decoded = jwtDecode(token);
-            userId = decoded.sub || decoded.userId || decoded.id;
+            username = decoded.sub || decoded.username || decoded.userId || decoded.id;
         } catch (err) {
             console.error("Invalid token", err);
         }
     }
 
     useEffect(() => {
-        if (!userId) return;
+        if (!username) return;
 
         const fetchUser = async () => {
             try {
-                const res = await api.get(`/api/users/username/${userId}`, {
+                const res = await api.get(`/api/users/username/${username}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setUser(res.data);
@@ -53,7 +53,7 @@ export default function ProfilePage() {
         };
 
         fetchUser();
-    }, [userId]);
+    }, [username]);
 
     const handleChange = (e) => {
         setFormData(prev => ({
@@ -65,7 +65,7 @@ export default function ProfilePage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await api.put(`/api/users/username/${userId}`, formData, {
+            await api.put(`/api/users/username/${username}`, formData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             alert("Profile updated successfully!");
